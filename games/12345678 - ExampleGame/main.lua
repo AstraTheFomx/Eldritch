@@ -1,6 +1,6 @@
 local UNIVERSAL_URL = "https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/games/universal/main.lua?rev=3"
 
-local Base = loadstring(game:HttpGet(UNIVERSAL_URL))()
+local Base = loadstring(game:HttpGet(UNIVERSAL_URL, true))()
 local Entity = Base.Entity
 
 local Game = Base:CreateCategory("Example")

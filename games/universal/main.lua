@@ -1,7 +1,7 @@
 local BASE_URL = "https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/EldritchBase.lua?rev=2"
 local LOADER_URL = ""
 
-local Base = loadstring(game:HttpGet(BASE_URL))()
+local Base = loadstring(game:HttpGet(BASE_URL, true))()
 Base:Start("Eldritch")
 
 local Services = Base.Services
@@ -721,7 +721,7 @@ local AutoRejoin = Utility:CreateModule({
         if on then
             if LOADER_URL ~= "" and type(queue_on_teleport) == "function" then
                 pcall(function()
-                    queue_on_teleport("loadstring(game:HttpGet(\"" .. LOADER_URL .. "\"))()")
+                    queue_on_teleport("loadstring(game:HttpGet(\"" .. LOADER_URL .. "\", true))()")
                 end)
             end
             if TeleportService ~= nil then
@@ -757,7 +757,7 @@ AutoRejoin:CreateButton("Server Hop", function()
             local extra = ""
             if cursor ~= "" then extra = "&cursor=" .. cursor end
             local url = "https://games.roblox.com/v1/games/" .. tostring(game.PlaceId) .. "/servers/Public?sortOrder=Asc&limit=100" .. extra
-            local body = game:HttpGet(url)
+            local body = game:HttpGet(url, true)
             local data = HttpService:JSONDecode(body)
             if type(data) ~= "table" then error("bad response") end
             local servers = data.data

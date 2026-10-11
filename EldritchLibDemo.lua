@@ -1,4 +1,4 @@
-local EldritchLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/EldritchLib.lua?rev=2"))()
+local EldritchLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/EldritchLib.lua?rev=2", true))()
 
 local Win = EldritchLib:CreateWindow({
     Title = "Eldritch",

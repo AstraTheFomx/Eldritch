@@ -1,4 +1,4 @@
-local EldritchLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/EldritchLib.lua?rev=1"))()
+local EldritchLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/EldritchLib.lua?rev=1", true))()
 assert(type(EldritchLib) == "table" and type(EldritchLib.CreateWindow) == "function", "EldritchLib failed to load")
 
 local cloneref = (typeof and typeof(cloneref) == "function" and cloneref)
@@ -1066,7 +1066,7 @@ Utility:AddButton("Server Hop", function()
             local extra = ""
             if cursor ~= "" then extra = "&cursor=" .. cursor end
             local url = "https://games.roblox.com/v1/games/" .. tostring(game.PlaceId) .. "/servers/Public?sortOrder=Asc&limit=100" .. extra
-            local body = game:HttpGet(url)
+            local body = game:HttpGet(url, true)
             local data = HttpService:JSONDecode(body)
             if type(data) ~= "table" then error("bad response") end
             local servers = data.data
