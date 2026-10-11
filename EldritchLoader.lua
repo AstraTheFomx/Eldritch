@@ -1,10 +1,11 @@
 local EldritchLoader = {}
-EldritchLoader.Rev = "?rev=5"
+EldritchLoader.Rev = "?rev=6"
 
 EldritchLoader.Root = "https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main"
 
 EldritchLoader.Games = {
     [12345678] = "12345678 - ExampleGame",
+    [155615604] = "155615604 - Prison Life",
 }
 
 EldritchLoader.Universal = "universal"

@@ -7,3 +7,4 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/AstraTheFomx/Eldritch
 ## Supported Games
 
 - Universal (anywhere)
+- Prison Life (155615604)
