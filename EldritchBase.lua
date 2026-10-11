@@ -76,6 +76,9 @@ end
 
 EldritchBase.Entity = Entity
 
+EldritchBase.Modules = {}
+EldritchBase.ModulesByName = {}
+
 function EldritchBase.ReleaseOwned(list)
     for _, item in ipairs(list) do
         if EldritchBase.Window ~= nil then
@@ -184,6 +187,8 @@ function EldritchBase:CreateCategory(name)
             end)
         end
         mod.UI = ui
+        table.insert(EldritchBase.Modules, mod)
+        EldritchBase.ModulesByName[mod.Name] = mod
 
         function mod:SetEnabled(v)
             v = (v == true)

@@ -1,4 +1,4 @@
-local BASE_URL = "https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/EldritchBase.lua?rev=2"
+local BASE_URL = "https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/EldritchBase.lua?rev=3"
 local LOADER_URL = ""
 
 local Base = loadstring(game:HttpGet(BASE_URL, true))()
@@ -77,6 +77,7 @@ pcall(function()
 end)
 
 local ESP, NameTags, Tracers, espCount, tracerStatus = nil, nil, nil, nil, nil
+local espConns = {}
 local clickTP = false
 local espRoot, removeHighlight, syncESP, watchPlayer = nil, nil, nil, nil
 local removeNameTag, updateTagText, ensureNameTag, watchNameTag, syncNameTags = nil, nil, nil, nil, nil
@@ -836,7 +837,7 @@ local Panic = Utility:CreateModule({
 Utility.Tab:AddButton("Hide UI (RightShift)", function()
     Base.Window:SetVisible(false)
 end)
-Utility.Tab:AddLabel("Build: u3")
+Utility.Tab:AddLabel("Build: u4")
 
 local gravSnap = gravRevert
 World.Tab:AddSubsection("Environment")
@@ -1027,8 +1028,6 @@ syncESP = function()
         end
     end
 end
-
-local espConns = {}
 
 watchPlayer = function(player)
     if player == LocalPlayer then return end
