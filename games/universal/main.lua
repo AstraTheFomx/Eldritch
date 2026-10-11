@@ -22,7 +22,7 @@ local Render = Base.Categories.Render
 local Utility = Base.Categories.Utility
 local World = Base.Categories.World
 
-local Shared = { teamCheck = true, sprintOn = false, sprintMult = 1.75 }
+local Shared = { teamCheck = false, sprintOn = false, sprintMult = 1.75 }
 local keys = {}
 local function clampNumber(value, low, high, fallback)
     local number = tonumber(value)
@@ -534,7 +534,7 @@ ESP = Render:CreateModule({
         end
     end,
 })
-ESP:CreateToggle("Team Check", true, function(v)
+ESP:CreateToggle("Team Check", false, function(v)
     Shared.teamCheck = (v == true)
 end)
 espCount = ESP:CreateLabel("Tracked: 0")
@@ -836,7 +836,7 @@ local Panic = Utility:CreateModule({
 Utility.Tab:AddButton("Hide UI (RightShift)", function()
     Base.Window:SetVisible(false)
 end)
-Utility.Tab:AddLabel("Build: u2")
+Utility.Tab:AddLabel("Build: u3")
 
 local gravSnap = gravRevert
 World.Tab:AddSubsection("Environment")
