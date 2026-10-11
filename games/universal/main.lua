@@ -1,4 +1,4 @@
-local BASE_URL = "https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/EldritchBase.lua?rev=3"
+local BASE_URL = "https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/EldritchBase.lua?rev=4"
 local LOADER_URL = ""
 
 local Base = loadstring(game:HttpGet(BASE_URL, true))()
@@ -85,23 +85,28 @@ local clearTracers, syncTracers, findPlayer, snapshotLighting, disableFullbright
 
 Blatant.Tab:AddSubsection("Movement")
 
+local function restoreSpeed()
+    local humanoid = Entity.Humanoid()
+    if humanoid ~= nil then
+        pcall(function() humanoid.WalkSpeed = speedRevert end)
+    end
+    if speedMethod ~= "WalkSpeed" then
+        local root = Entity.Root()
+        if root ~= nil then
+            pcall(function()
+                local velocity = root.AssemblyLinearVelocity
+                root.AssemblyLinearVelocity = Vector3.new(0, velocity.Y, 0)
+            end)
+        end
+    end
+end
 local Speed = Blatant:CreateModule({
     Name = "Speed",
     Function = function(on)
-        if not on then
-            local humanoid = Entity.Humanoid()
-            if humanoid ~= nil then
-                pcall(function() humanoid.WalkSpeed = speedRevert end)
-            end
-            if speedMethod ~= "WalkSpeed" then
-                local root = Entity.Root()
-                if root ~= nil then
-                    pcall(function()
-                        local velocity = root.AssemblyLinearVelocity
-                        root.AssemblyLinearVelocity = Vector3.new(0, velocity.Y, 0)
-                    end)
-                end
-            end
+        if on then
+            Speed:Clean(function() restoreSpeed() end)
+        else
+            restoreSpeed()
         end
     end,
 })
@@ -152,24 +157,29 @@ Sprint:CreateSlider("Boost %", 100, 400, 175, function(v)
 end)
 
 local flySpeed, flyVertical, flyMethod = 50, 50, "Velocity"
+local function restoreFly()
+    local humanoid = Entity.Humanoid()
+    if humanoid ~= nil then
+        pcall(function()
+            humanoid.PlatformStand = false
+            humanoid.AutoRotate = true
+        end)
+    end
+    local root = Entity.Root()
+    if root ~= nil then
+        pcall(function()
+            root.AssemblyLinearVelocity = Vector3.new()
+            root.AssemblyAngularVelocity = Vector3.new()
+        end)
+    end
+end
 local Fly = Blatant:CreateModule({
     Name = "Fly",
     Function = function(on)
-        if not on then
-            local humanoid = Entity.Humanoid()
-            if humanoid ~= nil then
-                pcall(function()
-                    humanoid.PlatformStand = false
-                    humanoid.AutoRotate = true
-                end)
-            end
-            local root = Entity.Root()
-            if root ~= nil then
-                pcall(function()
-                    root.AssemblyLinearVelocity = Vector3.new()
-                    root.AssemblyAngularVelocity = Vector3.new()
-                end)
-            end
+        if on then
+            Fly:Clean(function() restoreFly() end)
+        else
+            restoreFly()
         end
     end,
 })
@@ -353,7 +363,17 @@ end)
 local Noclip = Blatant:CreateModule({
     Name = "Noclip",
     Function = function(on)
-        if not on then
+        if on then
+            Noclip:Clean(function()
+                local character = Entity.Character()
+                if character == nil then return end
+                for _, part in ipairs(character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        pcall(function() part.CanCollide = true end)
+                    end
+                end
+            end)
+        else
             local character = Entity.Character()
             if character ~= nil then
                 for _, part in ipairs(character:GetDescendants()) do
@@ -459,6 +479,12 @@ local FOV = Legit:CreateModule({
         local camera = Entity.Camera()
         if camera == nil then return end
         if on then
+            FOV:Clean(function()
+                local restoreCam = Entity.Camera()
+                if restoreCam ~= nil then
+                    pcall(function() restoreCam.FieldOfView = fovValue end)
+                end
+            end)
             pcall(function() camera.FieldOfView = fovLive end)
         else
             pcall(function() camera.FieldOfView = fovValue end)
@@ -481,6 +507,11 @@ local Clock = Legit:CreateModule({
     Function = function(on)
         if Lighting == nil then return end
         if on then
+            Clock:Clean(function()
+                if Lighting ~= nil then
+                    pcall(function() Lighting.ClockTime = clockValue end)
+                end
+            end)
             pcall(function() Lighting.ClockTime = clockLive end)
         else
             pcall(function() Lighting.ClockTime = clockValue end)
@@ -586,7 +617,9 @@ local Fullbright = Render:CreateModule({
     Name = "Fullbright",
     Function = function(on)
         if on then
+            lightSnap = nil
             snapshotLighting()
+            Fullbright:Clean(function() disableFullbright() end)
             if Lighting == nil then return end
             pcall(function()
                 Lighting.Ambient = Color3.fromRGB(255, 255, 255)
@@ -837,7 +870,7 @@ local Panic = Utility:CreateModule({
 Utility.Tab:AddButton("Hide UI (RightShift)", function()
     Base.Window:SetVisible(false)
 end)
-Utility.Tab:AddLabel("Build: u4")
+Utility.Tab:AddLabel("Build: u5")
 
 local gravSnap = gravRevert
 World.Tab:AddSubsection("Environment")
@@ -845,7 +878,12 @@ World.Tab:AddSubsection("Environment")
 local Gravity = World:CreateModule({
     Name = "Gravity",
     Function = function(on)
-        if not on then
+        if on then
+            pcall(function() gravSnap = workspace.Gravity end)
+            Gravity:Clean(function()
+                pcall(function() workspace.Gravity = gravSnap end)
+            end)
+        else
             pcall(function() workspace.Gravity = gravSnap end)
         end
     end,
@@ -890,6 +928,11 @@ local Xray = World:CreateModule({
     Name = "Xray",
     Function = function(on)
         if on then
+            Xray:Clean(function()
+                for part in pairs(xrayTouched) do
+                    pcall(function() part.LocalTransparencyModifier = 0 end)
+                end
+            end)
             Xray:Clean(workspace.DescendantAdded:Connect(function(part)
                 if part:IsA("BasePart") then applyXray(part) end
             end))
@@ -918,6 +961,11 @@ local FastPrompt = World:CreateModule({
     Name = "FastProxPrompt",
     Function = function(on)
         if on then
+            FastPrompt:Clean(function()
+                for prompt, hold in pairs(promptSaved) do
+                    pcall(function() prompt.HoldDuration = hold end)
+                end
+            end)
             FastPrompt:Clean(workspace.DescendantAdded:Connect(function(part)
                 if part:IsA("ProximityPrompt") then fastPrompt(part) end
             end))
@@ -1112,6 +1160,15 @@ end
 
 syncNameTags = function()
     if not NameTags.Enabled then return end
+    for i = #nameConns, 1, -1 do
+        local conn = nameConns[i]
+        local alive = false
+        pcall(function() alive = conn.Connected end)
+        if not alive then
+            Base.Window:Untrack(conn)
+            table.remove(nameConns, i)
+        end
+    end
     local myTeam = LocalPlayer.Team
     for _, player in ipairs(Players:GetPlayers()) do
         local model = player.Character

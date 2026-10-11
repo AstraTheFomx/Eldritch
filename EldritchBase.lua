@@ -1,7 +1,7 @@
 local EldritchBase = {}
 EldritchBase.Rev = 1
 
-local LIB_URL = "https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/EldritchLib.lua?rev=2"
+local LIB_URL = "https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/EldritchLib.lua?rev=3"
 
 local EldritchLib = loadstring(game:HttpGet(LIB_URL, true))()
 assert(type(EldritchLib) == "table" and type(EldritchLib.CreateWindow) == "function", "EldritchBase: interface failed to load")

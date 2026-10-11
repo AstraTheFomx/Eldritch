@@ -1,4 +1,4 @@
-local EldritchLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/EldritchLib.lua?rev=1", true))()
+local EldritchLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/EldritchLib.lua?rev=3", true))()
 assert(type(EldritchLib) == "table" and type(EldritchLib.CreateWindow) == "function", "EldritchLib failed to load")
 
 local cloneref = (typeof and typeof(cloneref) == "function" and cloneref)

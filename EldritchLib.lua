@@ -264,11 +264,17 @@ function EldritchLib:CreateWindow(opts)
             dragging = true
             dragStart = input.Position
             frameStart = main.Position
-            window:Track(input.Changed:Connect(function()
+            local endConn = nil
+            endConn = input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
                     dragging = false
+                    if endConn ~= nil then
+                        window:Untrack(endConn)
+                        endConn = nil
+                    end
                 end
-            end))
+            end)
+            window:Track(endConn)
         end
     end))
     window:Track(UserInputService.InputChanged:Connect(function(input)

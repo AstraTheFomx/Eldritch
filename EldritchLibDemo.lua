@@ -1,9 +1,19 @@
-local EldritchLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/EldritchLib.lua?rev=2", true))()
+local EldritchLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/EldritchLib.lua?rev=3", true))()
 
 local Win = EldritchLib:CreateWindow({
     Title = "Eldritch",
     ToggleKey = Enum.KeyCode.RightShift
 })
+
+if type(getgenv) == "function" then
+    pcall(function()
+        local prior = getgenv().__ELDRITCH_DEMO_CLEANUP
+        if type(prior) == "function" then prior() end
+        getgenv().__ELDRITCH_DEMO_CLEANUP = function()
+            pcall(function() Win:Destroy() end)
+        end
+    end)
+end
 
 local Stats = Win:AddTab("Stats")
 local Farm = Win:AddTab("Auto Farm")
@@ -63,16 +73,14 @@ Player:AddToggle("Enable WalkSpeed", false, function(v)
         local h = c and c:FindFirstChildOfClass("Humanoid")
         if h then wsRevert = h.WalkSpeed end
         applyWs()
-        task.spawn(function()
-            while wsEnabled do
-                applyWs()
-                task.wait(0.25)
-            end
-        end)
     else
         revertWs()
     end
 end)
+local demoRun = game:GetService("RunService")
+Win:Track(demoRun.Heartbeat:Connect(function()
+    applyWs()
+end))
 Player:AddInput("WalkSpeed:", "35", function(v)
     local n = tonumber(v)
     if n then
