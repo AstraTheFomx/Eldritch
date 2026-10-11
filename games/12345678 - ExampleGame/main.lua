@@ -1,4 +1,4 @@
-local UNIVERSAL_URL = "https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/games/universal/main.lua?rev=1"
+local UNIVERSAL_URL = "https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/games/universal/main.lua?rev=2"
 
 local Base = loadstring(game:HttpGet(UNIVERSAL_URL))()
 local Entity = Base.Entity

@@ -360,6 +360,8 @@ function EldritchLib:CreateWindow(opts)
         pad.PaddingRight = UDim.new(0, 4)
         pad.Parent = page
 
+        local holder = page
+
         win:Track(btn.MouseButton1Click:Connect(function()
             self:SelectTab(name)
         end))
@@ -369,8 +371,8 @@ function EldritchLib:CreateWindow(opts)
             row.Size = UDim2.new(1, 0, 0, h or 32)
             row.BackgroundColor3 = T.Row
             row.BorderSizePixel = 0
-            row.LayoutOrder = #page:GetChildren() * 2
-            row.Parent = page
+            row.LayoutOrder = #holder:GetChildren() * 2
+            row.Parent = holder
             corner(row, 6)
             return row
         end
@@ -383,7 +385,61 @@ function EldritchLib:CreateWindow(opts)
             s.TextXAlignment = Enum.TextXAlignment.Left
             s.LayoutOrder = #page:GetChildren() * 2
             s.Parent = page
+            holder = page
             return s
+        end
+
+        function tab:AddSubsection(text, collapsed)
+            local box = Instance.new("Frame")
+            box.Name = "Subsection"
+            box.Size = UDim2.new(1, 0, 0, 0)
+            box.AutomaticSize = Enum.AutomaticSize.Y
+            box.BackgroundTransparency = 1
+            box.LayoutOrder = #page:GetChildren() * 2
+            box.Parent = page
+            local boxLayout = Instance.new("UIListLayout")
+            boxLayout.Padding = UDim.new(0, 4)
+            boxLayout.SortOrder = Enum.SortOrder.LayoutOrder
+            boxLayout.Parent = box
+            local head = Instance.new("TextButton")
+            head.LayoutOrder = 1
+            head.Size = UDim2.new(1, 0, 0, 24)
+            head.BackgroundColor3 = T.TabIdle
+            head.TextColor3 = T.Accent
+            head.Font = Enum.Font.GothamBold
+            head.TextSize = 12
+            head.AutoButtonColor = true
+            head.Parent = box
+            corner(head, 6)
+            local body = Instance.new("Frame")
+            body.LayoutOrder = 2
+            body.Size = UDim2.new(1, 0, 0, 0)
+            body.AutomaticSize = Enum.AutomaticSize.Y
+            body.BackgroundTransparency = 1
+            body.Parent = box
+            local bodyLayout = Instance.new("UIListLayout")
+            bodyLayout.Padding = UDim.new(0, 6)
+            bodyLayout.SortOrder = Enum.SortOrder.LayoutOrder
+            bodyLayout.Parent = body
+            local open = not collapsed
+            local function paint()
+                head.Text = (open and "-  " or "+  ") .. tostring(text)
+            end
+            paint()
+            win:Track(head.MouseButton1Click:Connect(function()
+                open = not open
+                body.Visible = open
+                paint()
+            end))
+            body.Visible = open
+            holder = body
+            local api = {}
+            function api:SetOpen(v)
+                open = (v == true)
+                body.Visible = open
+                paint()
+            end
+            return api
         end
 
         function tab:AddLabel(text)
@@ -406,9 +462,9 @@ function EldritchLib:CreateWindow(opts)
             b.Text = tostring(text)
             b.Font = Enum.Font.GothamBold
             b.TextSize = 13
-            b.LayoutOrder = #page:GetChildren() * 2
+            b.LayoutOrder = #holder:GetChildren() * 2
             b.AutoButtonColor = true
-            b.Parent = page
+            b.Parent = holder
             corner(b, 6)
             stroke(b, T.Stroke, 1)
             win:Track(b.MouseEnter:Connect(function()
@@ -599,10 +655,10 @@ function EldritchLib:CreateWindow(opts)
             list.Size = UDim2.new(1, 0, 0, 0)
             list.BackgroundColor3 = T.Header
             list.BorderSizePixel = 0
-            list.LayoutOrder = #page:GetChildren() * 2 + 1
+            list.LayoutOrder = #holder:GetChildren() * 2 + 1
             list.Visible = false
             list.AutomaticSize = Enum.AutomaticSize.Y
-            list.Parent = page
+            list.Parent = holder
             corner(list, 6)
             stroke(list, T.Stroke, 1)
             local listLayout = Instance.new("UIListLayout")

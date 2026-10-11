@@ -1,4 +1,4 @@
-local BASE_URL = "https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/EldritchBase.lua?rev=1"
+local BASE_URL = "https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/EldritchBase.lua?rev=2"
 local LOADER_URL = ""
 
 local Base = loadstring(game:HttpGet(BASE_URL))()
@@ -81,6 +81,8 @@ local clickTP = false
 local espRoot, removeHighlight, syncESP, watchPlayer = nil, nil, nil, nil
 local removeNameTag, updateTagText, ensureNameTag, watchNameTag, syncNameTags = nil, nil, nil, nil, nil
 local clearTracers, syncTracers, findPlayer, snapshotLighting, disableFullbright = nil, nil, nil, nil, nil
+
+Blatant.Tab:AddSubsection("Movement")
 
 local Speed = Blatant:CreateModule({
     Name = "Speed",
@@ -389,7 +391,16 @@ Base:Step(function()
     if humanoid == nil or root == nil then return end
     local state = nil
     pcall(function() state = humanoid:GetState() end)
-    if state ~= Enum.HumanoidStateType.Swimming then return end
+    if state ~= Enum.HumanoidStateType.Swimming then
+        local under = nil
+        pcall(function()
+            under = workspace:Raycast(root.Position, Vector3.new(0, -4, 0))
+        end)
+        if under == nil or under.Material ~= Enum.Material.Water then return end
+        if humanoid.MoveDirection.Magnitude < 0.1 then return end
+        pcall(function() humanoid:ChangeState(Enum.HumanoidStateType.Swimming) end)
+        return
+    end
     local direction = humanoid.MoveDirection * swimSpeed
     if direction.Magnitude < 0.1 then return end
     pcall(function()
@@ -399,6 +410,8 @@ Base:Step(function()
 end)
 
 local voidHeight = -50
+Blatant.Tab:AddSubsection("Protection")
+
 local AntiVoid = Blatant:CreateModule({
     Name = "AntiVoid",
     Function = function(on)
@@ -437,6 +450,8 @@ Base:Step(function()
 end)
 
 local fovLive = fovValue
+Legit.Tab:AddSubsection("View")
+
 local FOV = Legit:CreateModule({
     Name = "FOV",
     Function = function(on)
@@ -486,6 +501,8 @@ local Speedmeter = Legit:CreateModule({
 local speedmeterLabel = Speedmeter:CreateLabel("0 studs/s")
 
 local espFolder = nil
+Render.Tab:AddSubsection("Player")
+
 ESP = Render:CreateModule({
     Name = "ESP",
     Function = function(on)
@@ -562,6 +579,8 @@ Tracers = Render:CreateModule({
 })
 tracerStatus = Tracers:CreateLabel("Ready")
 
+Render.Tab:AddSubsection("World")
+
 local Fullbright = Render:CreateModule({
     Name = "Fullbright",
     Function = function(on)
@@ -629,6 +648,8 @@ Waypoints:CreateButton("Clear", function()
     wpStatus:Set("Points: 0")
 end)
 
+Utility.Tab:AddSubsection("Player")
+
 local InfJump = Utility:CreateModule({
     Name = "InfiniteJump",
     Function = function(on)
@@ -692,6 +713,8 @@ end)
 
 local sessionInfo = nil
 local sessionStatus = nil
+Utility.Tab:AddSubsection("Session")
+
 local AutoRejoin = Utility:CreateModule({
     Name = "AutoRejoin",
     Function = function(on)
@@ -801,17 +824,23 @@ local AntiAFK = Utility:CreateModule({
     end,
 })
 
+Utility.Tab:AddSubsection("Interface")
+
 local Panic = Utility:CreateModule({
     Name = "Panic",
-    Function = function(on)
-        if on then Base.Window:Destroy() end
+    Button = true,
+    Function = function()
+        Base.Window:Destroy()
     end,
 })
 Utility.Tab:AddButton("Hide UI (RightShift)", function()
     Base.Window:SetVisible(false)
 end)
+Utility.Tab:AddLabel("Build: u2")
 
 local gravSnap = gravRevert
+World.Tab:AddSubsection("Environment")
+
 local Gravity = World:CreateModule({
     Name = "Gravity",
     Function = function(on)

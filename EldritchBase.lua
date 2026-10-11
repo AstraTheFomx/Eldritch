@@ -1,7 +1,7 @@
 local EldritchBase = {}
 EldritchBase.Rev = 1
 
-local LIB_URL = "https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/EldritchLib.lua?rev=1"
+local LIB_URL = "https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main/EldritchLib.lua?rev=2"
 
 local EldritchLib = loadstring(game:HttpGet(LIB_URL))()
 assert(type(EldritchLib) == "table" and type(EldritchLib.CreateWindow) == "function", "EldritchBase: interface failed to load")
@@ -172,9 +172,17 @@ function EldritchBase:CreateCategory(name)
             Owned = {},
             Error = nil,
         }
-        local ui = tab:AddToggle(mod.Name, false, function(v)
-            mod:SetEnabled(v)
-        end)
+        local ui = nil
+        if def.Button then
+            mod.Button = true
+            ui = tab:AddButton(mod.Name, function()
+                mod:Activate()
+            end)
+        else
+            ui = tab:AddToggle(mod.Name, false, function(v)
+                mod:SetEnabled(v)
+            end)
+        end
         mod.UI = ui
 
         function mod:SetEnabled(v)
@@ -191,6 +199,13 @@ function EldritchBase:CreateCategory(name)
 
         function mod:Toggle()
             self:SetEnabled(not self.Enabled)
+        end
+
+        function mod:Activate()
+            if type(def.Function) == "function" then
+                local ok, err = pcall(def.Function)
+                if not ok then self.Error = tostring(err) end
+            end
         end
 
         function mod:Clean(...)

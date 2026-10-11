@@ -1,5 +1,5 @@
 local EldritchLoader = {}
-EldritchLoader.Rev = "?rev=1"
+EldritchLoader.Rev = "?rev=2"
 
 EldritchLoader.Root = "https://raw.githubusercontent.com/AstraTheFomx/Eldritch/main"
 
